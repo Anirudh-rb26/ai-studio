@@ -2,6 +2,11 @@
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+@custom-variant light (&:where(:not(.dark) *));
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
 
 @theme inline {
   --color-background: var(--background);

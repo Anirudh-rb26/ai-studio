@@ -7,6 +7,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { Eye, EyeClosedIcon, Lock, Mail } from "lucide-react";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { authApi } from "@/lib/api";
 
 export default function Home() {
   // Toggle States
@@ -33,7 +34,7 @@ export default function Home() {
   };
 
   // Handle form submission
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Reset errors
     setEmailError("");
     setPasswordError("");
@@ -67,10 +68,27 @@ export default function Home() {
     }
 
     if (isValid) {
-      console.log("Form is valid", { email, password });
       setIsLoading(true);
-      router.push('/home')
-      setIsLoading(false);
+      try {
+        let response;
+        if (signupToggle) {
+          response = await authApi.signup(email, password);
+        } else {
+          response = await authApi.login(email, password);
+        }
+        localStorage.setItem("token", response.token);
+        router.push('/home')
+      } catch (error) {
+        if (error instanceof Error) {
+          setPasswordError(error.message);
+        } else {
+          setPasswordError("An error occured, please try again later");
+        }
+      } finally {
+        setIsLoading(false);
+      }
+
+
     }
   };
 

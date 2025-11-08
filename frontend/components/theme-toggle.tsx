@@ -21,7 +21,7 @@ export function ThemeToggle() {
     return (
         <motion.button
             onClick={() => setTheme(isDark ? 'light' : 'dark')}
-            className={`relative flex items-center justify-between w-20 h-10 rounded-full p-1 cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300 ${isDark
+            className={`relative flex items-center justify-between w-14 h-7 rounded-full p-0.5 cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300 ${isDark
                 ? 'bg-linear-to-r from-indigo-600 to-purple-700'
                 : 'bg-linear-to-r from-yellow-400 to-orange-500'
                 }`}
@@ -46,21 +46,21 @@ export function ThemeToggle() {
 
             {/* Sun Icon - Left side */}
             <motion.div
-                className="relative z-10 flex items-center justify-center ml-1"
+                className="relative z-10 flex items-center justify-center ml-0.5"
                 animate={{
                     scale: isDark ? 0.8 : 1,
                     opacity: isDark ? 0.5 : 1,
                 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
             >
-                <Sun className="w-5 h-5 text-white" />
+                <Sun className="w-4 h-4 text-white" />
             </motion.div>
 
             {/* Toggle Circle */}
             <motion.div
-                className="absolute w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center"
+                className="absolute w-6 h-6 bg-white rounded-full shadow-md flex items-center justify-center"
                 animate={{
-                    x: isDark ? 40 : 4,
+                    x: isDark ? 28 : 2,
                 }}
                 transition={{
                     type: "spring",
@@ -75,42 +75,42 @@ export function ThemeToggle() {
                     transition={{ duration: 0.5, ease: "easeInOut" }}
                 >
                     {isDark ? (
-                        <Moon className="w-4 h-4 text-indigo-600" />
+                        <Moon className="w-3 h-3 text-indigo-600" />
                     ) : (
-                        <Sun className="w-4 h-4 text-yellow-500" />
+                        <Sun className="w-3 h-3 text-yellow-500" />
                     )}
                 </motion.div>
             </motion.div>
 
             {/* Moon Icon - Right side */}
             <motion.div
-                className="relative z-10 flex items-center justify-center mr-1"
+                className="relative z-10 flex items-center justify-center mr-0.5"
                 animate={{
                     scale: isDark ? 1 : 0.8,
                     opacity: isDark ? 1 : 0.5,
                 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
             >
-                <Moon className="w-5 h-5 text-white" />
+                <Moon className="w-4 h-4 text-white" />
             </motion.div>
 
             {/* Stars decoration (only visible in dark mode) */}
             {isDark && (
                 <>
                     <motion.div
-                        className="absolute top-1 left-6 w-1 h-1 bg-white rounded-full"
+                        className="absolute top-0.5 left-4 w-0.5 h-0.5 bg-white rounded-full"
                         initial={{ opacity: 0, scale: 0 }}
                         animate={{ opacity: [0, 1, 0], scale: [0, 1, 0] }}
                         transition={{ duration: 1.5, repeat: Infinity, delay: 0 }}
                     />
                     <motion.div
-                        className="absolute top-3 left-4 w-1 h-1 bg-white rounded-full"
+                        className="absolute top-2 left-3 w-0.5 h-0.5 bg-white rounded-full"
                         initial={{ opacity: 0, scale: 0 }}
                         animate={{ opacity: [0, 1, 0], scale: [0, 1, 0] }}
                         transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }}
                     />
                     <motion.div
-                        className="absolute bottom-2 left-5 w-1 h-1 bg-white rounded-full"
+                        className="absolute bottom-1 left-3.5 w-0.5 h-0.5 bg-white rounded-full"
                         initial={{ opacity: 0, scale: 0 }}
                         animate={{ opacity: [0, 1, 0], scale: [0, 1, 0] }}
                         transition={{ duration: 1.5, repeat: Infinity, delay: 1 }}
