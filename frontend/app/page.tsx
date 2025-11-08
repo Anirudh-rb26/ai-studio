@@ -1,11 +1,12 @@
 "use client"
 
-import { Eye, EyeClosedIcon, Lock, Mail } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { Eye, EyeClosedIcon, Lock, Mail } from "lucide-react";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { useState } from "react";
-import { Spinner } from "@/components/ui/spinner";
 
 export default function Home() {
   // Toggle States
@@ -22,6 +23,8 @@ export default function Home() {
   // Error state
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+
+  const router = useRouter();
 
   // Email validation regex
   const validateEmail = (email: string): boolean => {
@@ -66,6 +69,7 @@ export default function Home() {
     if (isValid) {
       console.log("Form is valid", { email, password });
       setIsLoading(true);
+      router.push('/home')
       setIsLoading(false);
     }
   };
@@ -73,7 +77,6 @@ export default function Home() {
   // Handle mode toggle
   const handleModeToggle = () => {
     setSignupToggle(!signupToggle);
-    // Clear errors when switching modes
     setEmailError("");
     setPasswordError("");
     setPassword("");
