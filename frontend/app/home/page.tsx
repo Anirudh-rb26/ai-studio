@@ -23,6 +23,10 @@ const Home = () => {
         setSidebarOpen(false);
     };
 
+    const handleClearGeneration = () => {
+        setSelectedGeneration(null);
+    };
+
     return (
         <div className='flex flex-col w-full h-full p-2'>
             <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
@@ -36,11 +40,14 @@ const Home = () => {
                         selectedGenerationId={selectedGeneration?.id}
                     />
                 </div>
-                {/* Overlay for mobile when sidebar open */}
                 {sidebarOpen && <div className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden" onClick={() => setSidebarOpen(false)} />}
                 {/* Main content - full width on mobile, shrinks on desktop */}
                 <div className='flex-1 md:w-[80%] h-full rounded-2xl p-2 border shadow-2xl'>
-                    <MainSection onGenerationSuccess={handleGenerationSuccess} currentGeneration={selectedGeneration} />
+                    <MainSection
+                        onGenerationSuccess={handleGenerationSuccess}
+                        currentGeneration={selectedGeneration}
+                        onClearGeneration={handleClearGeneration}
+                    />
                 </div>
             </div>
         </div>

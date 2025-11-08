@@ -2,7 +2,7 @@
 
 "use client"
 
-import { Send, X, Loader2 } from 'lucide-react'
+import { Send, X, Loader2, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import ImageDropzone from '@/components/image-dropzone'
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupTextarea } from '@/components/ui/input-group'
@@ -14,9 +14,10 @@ import { useGenerate } from '@/hooks/useGenerate'
 interface MainSectionProps {
     onGenerationSuccess: (generation: Generation) => void;
     currentGeneration: Generation | null;
+    onClearGeneration: () => void;
 }
 
-const MainSection = ({ onGenerationSuccess, currentGeneration }: MainSectionProps) => {
+const MainSection = ({ onGenerationSuccess, currentGeneration, onClearGeneration }: MainSectionProps) => {
     const [image, setImage] = useState<File | null>(null);
     const [prompt, setPrompt] = useState('');
     const [style, setStyle] = useState('realistic');
@@ -30,11 +31,25 @@ const MainSection = ({ onGenerationSuccess, currentGeneration }: MainSectionProp
 
         try {
             await generate(image, prompt, style);
-            setImage(null);
-            setPrompt('');
+            // Don't clear image and prompt here - wait for success
         } catch (err) {
             console.error('Generation Failed: ', err);
         }
+    }
+
+    const handleGenerationSuccess = async (generation: Generation) => {
+        await onGenerationSuccess(generation);
+        // Clear the uploaded image and prompt after successful generation
+        setImage(null);
+        setPrompt('');
+    }
+
+    const handleRemoveUploadedImage = () => {
+        setImage(null);
+    }
+
+    const handleRemoveGeneratedImage = () => {
+        onClearGeneration();
     }
 
     const canGenerate = image && prompt.trim() && !isGenerating;
@@ -45,9 +60,13 @@ const MainSection = ({ onGenerationSuccess, currentGeneration }: MainSectionProp
             : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}${currentGeneration.imageUrl}`)
         : null;
 
+    // Show generated image if it exists and no new image is uploaded
+    const showGeneratedImage = !image && currentGeneration && currentImageUrl;
+    const showUploadedImage = image && !isGenerating;
+
     return (
         <div className='w-full h-full rounded-2xl flex flex-col gap-y-3 justify-between'>
-            <div className='w-full h-[80%]'>
+            <div className='w-full h-[80%] relative'>
                 {isGenerating ? (
                     <div className="relative w-full h-full rounded-xl overflow-hidden border bg-background flex items-center justify-center">
                         <div className="flex flex-col items-center gap-4">
@@ -60,26 +79,51 @@ const MainSection = ({ onGenerationSuccess, currentGeneration }: MainSectionProp
                             )}
                         </div>
                     </div>
-                ) : currentGeneration && currentImageUrl ? (
+                ) : showUploadedImage ? (
+                    <div className="relative w-full h-full rounded-xl overflow-hidden border">
+                        <img
+                            src={URL.createObjectURL(image)}
+                            alt="Uploaded Preview"
+                            className="w-full h-full object-contain bg-background"
+                        />
+                        <Button
+                            className="p-1 absolute top-3 right-3 bg-background  text-white hover:bg-background hover:text-red-700"
+                            onClick={handleRemoveUploadedImage}
+                            aria-label="Remove Uploaded Image"
+                            variant={"ghost"}
+                        >
+                            <Trash2 className="w-5 h-5" />
+                        </Button>
+                    </div>
+                ) : showGeneratedImage ? (
                     <div className="relative w-full h-full rounded-xl overflow-hidden border">
                         <img
                             src={currentImageUrl}
                             alt={currentGeneration.prompt}
                             className="w-full h-full object-contain bg-background"
                         />
-                        <div className="absolute bottom-4 left-4 right-4 bg-black/70 text-white p-3 rounded-lg">
+                        <div className="absolute bottom-4 left-4 right-16 bg-black/70 text-white p-3 rounded-lg">
                             <p className="text-sm font-medium">{currentGeneration.prompt}</p>
                             <p className="text-xs text-gray-300 mt-1 capitalize">Style: {currentGeneration.style}</p>
                         </div>
+                        <Button
+                            className="p-1 bg-background  text-white hover:bg-background hover:text-red-700 absolute top-3 right-3"
+                            onClick={handleRemoveGeneratedImage}
+                            aria-label="Remove Generated Image"
+                        >
+                            <Trash2 className="w-5 h-5" />
+                        </Button>
                     </div>
                 ) : (
                     <ImageDropzone
+                        key={image ? (image as File).name : 'empty'}
                         onImageSelect={setImage}
                         currentImage={image}
                         disabled={isGenerating}
                     />
                 )}
             </div>
+
             {error && (
                 <div className="border text-red-700 px-4 py-3 rounded-lg">
                     <p className="text-sm font-medium">
