@@ -25,6 +25,13 @@ jobs:
         working-directory: ./backend
         run: npm install
 
+      - name: Create .env file
+        working-directory: ./backend
+        run: |
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
+          echo "API_URL=${{ secrets.API_URL }}" >> .env
+          echo "FRONTEND_URL=${{ secrets.FRONTEND_URL }}" >> .env
+
       - name: Generate Primsa Client
         working-directory: ./backend
         run: npx prisma generate
