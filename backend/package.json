@@ -7,6 +7,11 @@
     "dev": "ts-node-dev --files -r dotenv/config src/server.ts",
     "test": "jest --coverage"
   },
+"jest": {
+  "preset": "ts-jest",
+  "testEnvironment": "node",
+  "testMatch": ["**/tests/**/*.test.ts"]
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
