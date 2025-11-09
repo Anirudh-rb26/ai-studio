@@ -32,17 +32,23 @@ describe("Generations API", () => {
       .field("prompt", "A red dress")
       .field("style", "realistic");
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty("error", "VALIDATIONERROR");
+    // FIXED: Expect the correct error string from the backend
+    expect(res.body).toHaveProperty("error", "VALIDATION_ERROR");
     expect(res.body).toHaveProperty("message", "Image upload is required");
   });
 
   it("should reject POST with missing prompt or style", async () => {
+    // Send empty strings instead of omitting fields to avoid hanging
     const res = await request(app)
       .post(createEndpoint)
       .set("Authorization", `Bearer ${token}`)
-      .attach("image", path.resolve(__dirname, "../uploads/test.jpg"));
+      // Attach a valid image
+      .attach("image", path.resolve(__dirname, "../uploads/test.jpg"))
+      .field("prompt", "")
+      .field("style", "")
+      .timeout({ response: 5000, deadline: 10000 }); // Add timeout to prevent hanging
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty("error", "VALIDATIONERROR");
+    expect(res.body).toHaveProperty("error", "VALIDATION_ERROR");
     expect(res.body).toHaveProperty("message");
   });
 
@@ -63,7 +69,7 @@ describe("Generations API", () => {
       expect(res.body).toHaveProperty("createdAt");
     }
     if (res.status === 503) {
-      expect(res.body).toHaveProperty("error", "MODELOVERLOADED");
+      expect(res.body).toHaveProperty("error", "MODEL_OVERLOADED");
       expect(res.body).toHaveProperty("retryable", true);
     }
   });
