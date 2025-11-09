@@ -11,6 +11,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    environment: backend-env
 
     steps:
       - uses: actions/checkout@v3
