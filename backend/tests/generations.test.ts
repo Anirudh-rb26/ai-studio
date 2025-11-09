@@ -32,24 +32,32 @@ describe("Generations API", () => {
       .field("prompt", "A red dress")
       .field("style", "realistic");
     expect(res.status).toBe(400);
-    // FIXED: Expect the correct error string from the backend
     expect(res.body).toHaveProperty("error", "VALIDATION_ERROR");
     expect(res.body).toHaveProperty("message", "Image upload is required");
   });
 
   it("should reject POST with missing prompt or style", async () => {
-    // Send empty strings instead of omitting fields to avoid hanging
-    const res = await request(app)
-      .post(createEndpoint)
-      .set("Authorization", `Bearer ${token}`)
-      // Attach a valid image
-      .attach("image", path.resolve(__dirname, "../uploads/test.jpg"))
-      .field("prompt", "")
-      .field("style", "")
-      .timeout({ response: 5000, deadline: 10000 }); // Add timeout to prevent hanging
-    expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty("error", "VALIDATION_ERROR");
-    expect(res.body).toHaveProperty("message");
+    // More robust test implementation to avoid hanging
+    await new Promise<void>((resolve, reject) => {
+      request(app)
+        .post(createEndpoint)
+        .set("Authorization", `Bearer ${token}`)
+        .attach("image", path.resolve(__dirname, "../uploads/test.jpg"))
+        .field("prompt", "")
+        .field("style", "")
+        .timeout({ response: 5000, deadline: 10000 }) // timeout to prevent hanging
+        .end((err, res) => {
+          if (err) return reject(err);
+          try {
+            expect(res.status).toBe(400);
+            expect(res.body).toHaveProperty("error", "VALIDATION_ERROR");
+            expect(res.body).toHaveProperty("message");
+            resolve();
+          } catch (error) {
+            reject(error);
+          }
+        });
+    });
   });
 
   it("should succeed POST and return generation", async () => {
@@ -58,8 +66,8 @@ describe("Generations API", () => {
       .set("Authorization", `Bearer ${token}`)
       .field("prompt", "A blue shirt")
       .field("style", "realistic")
-      .attach("image", path.resolve(__dirname, "../uploads/test.png")); // Include a test image file
-    expect([201, 503]).toContain(res.status); // 201 for success, 503 if overload
+      .attach("image", path.resolve(__dirname, "../uploads/test.png"));
+    expect([201, 503]).toContain(res.status);
     if (res.status === 201) {
       expect(res.body).toHaveProperty("id");
       expect(res.body).toHaveProperty("imageUrl");
