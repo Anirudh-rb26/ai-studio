@@ -1,8 +1,71 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# AI Studio Web Application
 
-First, run the development server:
+## Project Setup
+
+### Backend Setup
+
+1. Navigate to the backend folder:
+
+```bash
+cd backend
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Set up Prisma:
+
+- Run Prisma generate to prepare Prisma client
+  ```
+  npx prisma generate
+  ```
+- Run any database migrations if applicable:
+  ```
+  npx prisma migrate deploy
+  ```
+
+4. Set up environment variables:
+
+- Create a `.env` file in the `backend` folder with the following content:
+  ```
+  DATABASE_URL="file:./dev.db"
+  API_URL=http://localhost:3001
+  FRONTEND_URL=http://localhost:3000
+  ```
+
+5. Run the backend server in development mode:
+
+```bash
+npm run dev
+```
+
+### Frontend Setup
+
+1. Navigate to the frontend folder:
+
+```bash
+cd frontend
+```
+
+2. Install dependencies:
+
+```bash
+npm i
+```
+
+3. Set up environment variables:
+
+- Create a `.env` file in the `frontend` folder with the following content:
+  ```
+  NEXT_PUBLIC_API_URL=http://localhost:3001
+  ```
+
+4. Run the frontend dev server:
 
 ```bash
 npm run dev
@@ -16,21 +79,21 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Testing
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Backend tests run with Jest and collect coverage.
+- Frontend tests use React Testing Library and/or Cypress.
 
-## Learn More
+## Environment Variables Summary
 
-To learn more about Next.js, take a look at the following resources:
+- Backend expects:
+- `DATABASE_URL` (e.g., "file:./dev.db")
+- `API_URL` (e.g., "http://localhost:3001")
+- `FRONTEND_URL` (e.g., "http://localhost:3000")
+- Frontend expects:
+- `NEXT_PUBLIC_API_URL` (e.g., "http://localhost:3001")
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Additional Notes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Make sure your backend and frontend are running concurrently for full functionality.
+- Refer to the API specification file at `backend/openapi.yaml`.
